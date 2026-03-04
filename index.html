@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tipsy Candy Land 🍭</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #FF4D6D;
+    --orange: #FF8C42;
+    --yellow: #FFD166;
+    --green: #06D6A0;
+    --blue: #118AB2;
+    --purple: #9B5DE5;
+    --pink: #F72585;
+    --candy-bg: #FFF0F5;
+    --dark: #2D1B4E;
+    --card-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--candy-bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(247,37,133,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(155,93,229,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(255,209,102,0.05) 0%, transparent 70%);
+  }
+
+  /* Candy stripe top bar */
+  .candy-stripe {
+    height: 12px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--red) 0px, var(--red) 30px,
+      var(--orange) 30px, var(--orange) 60px,
+      var(--yellow) 60px, var(--yellow) 90px,
+      var(--green) 90px, var(--green) 120px,
+      var(--blue) 120px, var(--blue) 150px,
+      var(--purple) 150px, var(--purple) 180px
+    );
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ---- SETUP SCREEN ---- */
+  #setup {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+    text-align: center;
+  }
+
+  .logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 8vw, 3.8rem);
+    background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    filter: drop-shadow(2px 3px 0px rgba(247,37,133,0.2));
+  }
+
+  .tagline {
+    color: var(--purple);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    opacity: 0.7;
+  }
+
+  .card {
+    background: white;
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
+    border: 2px solid rgba(155,93,229,0.1);
+  }
+
+  .card h2 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--dark);
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+  }
+
+  .player-count-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .count-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 3px solid #e8e0f0;
+    background: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: var(--dark);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .count-btn:hover { border-color: var(--purple); transform: scale(1.05); }
+  .count-btn.selected {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(155,93,229,0.4);
+  }
+
+  #player-inputs { display: flex; flex-direction: column; gap: 12px; }
+
+  .player-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .player-emoji {
+    font-size: 1.6rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .player-input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2.5px solid #e8e0f0;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .player-input-row input:focus { border-color: var(--purple); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: white;
+    border: none;
+    border-radius: 18px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(247,37,133,0.35);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(247,37,133,0.45); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .warning-badge {
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    border-radius: 14px;
+    padding: 14px 18px;
+    color: var(--dark);
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  /* ---- GAME SCREEN ---- */
+  #game {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px 16px 80px;
+  }
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .btn-sm {
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 2px solid #e8e0f0;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--dark);
+    transition: all 0.2s;
+  }
+  .btn-sm:hover { border-color: var(--purple); color: var(--purple); }
+
+  /* Board */
+  .board-container {
+    background: white;
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 16px;
+    border: 2px solid rgba(155,93,229,0.1);
+    overflow-x: auto;
+  }
+
+  .board-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--dark);
+    opacity: 0.5;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .board-track {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+  }
+
+  .space {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: white;
+    position: relative;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    border: 3px solid rgba(255,255,255,0.6);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    cursor: default;
+  }
+
+  .space.special {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    border: 3px solid rgba(255,255,255,0.8);
+  }
+
+  .space.start { background: linear-gradient(135deg, #a8e6cf, #06D6A0); }
+  .space.finish { background: linear-gradient(135deg, var(--yellow), var(--orange)); }
+  .space.red-s { background: var(--red); }
+  .space.orange-s { background: var(--orange); }
+  .space.yellow-s { background: var(--yellow); color: var(--dark); }
+  .space.green-s { background: var(--green); }
+  .space.blue-s { background: var(--blue); }
+  .space.purple-s { background: var(--purple); }
+
+  .space.has-player { transform: scale(1.15); }
+
+  .player-dots {
+    position: absolute;
+    top: -6px; right: -6px;
+    display: flex; gap: 2px;
+    flex-wrap: wrap;
+    max-width: 24px;
+  }
+  .player-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Players Panel */
+  .players-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .player-card {
+    background: white;
+    border-radius: 18px;
+    padding: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 2.5px solid #e8e0f0;
+    transition: all 0.3s;
+    text-align: center;
+  }
+
+  .player-card.active-player {
+    border-color: var(--purple);
+    box-shadow: 0 4px 20px rgba(155,93,229,0.3);
+    transform: translateY(-3px);
+  }
+
+  .player-card .p-emoji { font-size: 1.8rem; }
+  .player-card .p-name {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--dark);
+    margin: 4px 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .player-card .p-pos {
+    font-size: 0.78rem;
+    color: #999;
+    font-weight: 600;
+  }
+  .player-card .p-sips {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--pink);
+  }
+  .active-badge {
+    display: inline-block;
+    background: var(--purple);
+    color: white;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-top: 4px;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* Current Turn */
+  .turn-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    border: 2px solid rgba(155,93,229,0.1);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .turn-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+
+  .turn-sub {
+    color: #999;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .draw-btn {
+    padding: 18px 40px;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(247,37,133,0.35);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .draw-btn:hover { transform: translateY(-2px) scale(1.02); }
+  .draw-btn:active { transform: scale(0.97); }
+  .draw-btn:disabled {
+    background: #ccc;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Drawn Card Display */
+  .drawn-card {
+    display: none;
+    margin-top: 20px;
+    animation: cardReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .drawn-card.show { display: block; }
+
+  @keyframes cardReveal {
+    from { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+    to { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .card-visual {
+    width: 100px; height: 140px;
+    border-radius: 18px;
+    margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border: 4px solid rgba(255,255,255,0.5);
+  }
+
+  .card-rule {
+    background: linear-gradient(135deg, #f8f0ff, #fff0f8);
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1rem;
+    border: 2px solid rgba(155,93,229,0.15);
+    line-height: 1.5;
+  }
+  .card-rule .rule-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--purple);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .next-btn {
+    margin-top: 16px;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, var(--green), #0a9e7a);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(6,214,160,0.35);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .next-btn:hover { transform: translateY(-2px); }
+
+  /* Rules Reference */
+  .rules-section {
+    background: white;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    border: 2px solid rgba(155,93,229,0.1);
+  }
+
+  .rules-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--dark);
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .rule-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: white;
+  }
+  .rule-pill .dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+  }
+
+  .rule-pill.red-s { background: var(--red); }
+  .rule-pill.orange-s { background: var(--orange); }
+  .rule-pill.yellow-s { background: var(--yellow); color: var(--dark); }
+  .rule-pill.green-s { background: var(--green); }
+  .rule-pill.blue-s { background: var(--blue); }
+  .rule-pill.purple-s { background: var(--purple); }
+
+  .special-rules { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .special-rule-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #f8f0ff, #fff0f8);
+    color: var(--dark);
+    border: 2px solid rgba(155,93,229,0.15);
+  }
+
+  /* Win Screen */
+  #win {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .confetti-emoji { font-size: 4rem; animation: bounce 0.8s infinite alternate; }
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-15px); }
+  }
+
+  .win-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 8vw, 3rem);
+    background: linear-gradient(135deg, var(--yellow), var(--orange), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 12px 0 4px;
+  }
+
+  .win-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--purple);
+    margin-bottom: 8px;
+  }
+
+  .win-card {
+    background: white;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: var(--card-shadow);
+    margin: 24px 0;
+  }
+
+  .loser-rule {
+    background: linear-gradient(135deg, var(--red), var(--pink));
+    border-radius: 16px;
+    padding: 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .final-standings {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .standing-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #f8f0ff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--dark);
+  }
+
+  .standing-row.winner-row {
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    color: var(--dark);
+  }
+</style>
+</head>
+<body>
+
+<div class="candy-stripe"></div>
+
+<!-- SETUP SCREEN -->
+<div id="setup" class="screen active">
+  <div class="logo">🍭 Tipsy<br>Candy Land</div>
+  <div class="tagline">Adults Only • Drink Responsibly</div>
+
+  <div class="card">
+    <h2>👥 How many players?</h2>
+    <div class="player-count-row">
+      <button class="count-btn" onclick="setPlayerCount(2)">2</button>
+      <button class="count-btn" onclick="setPlayerCount(3)">3</button>
+      <button class="count-btn selected" onclick="setPlayerCount(4)">4</button>
+      <button class="count-btn" onclick="setPlayerCount(5)">5</button>
+      <button class="count-btn" onclick="setPlayerCount(6)">6</button>
+    </div>
+    <div id="player-inputs"></div>
+  </div>
+
+  <button class="btn-primary" onclick="startGame()">🎉 Start Game!</button>
+
+  <div class="warning-badge">
+    🍺 For 21+ only. Drink responsibly. Designate a driver. Water is your friend. Know your limits!
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game" class="screen">
+  <div class="game-header">
+    <div class="game-title">🍭 Tipsy Candy Land</div>
+    <button class="btn-sm" onclick="resetGame()">↩ Restart</button>
+  </div>
+
+  <div id="players-panel" class="players-panel"></div>
+
+  <div class="board-container">
+    <div class="board-title">🗺️ THE BOARD</div>
+    <div id="board-track" class="board-track"></div>
+  </div>
+
+  <div class="turn-card">
+    <div id="turn-name" class="turn-name"></div>
+    <div id="turn-sub" class="turn-sub">It's your turn! Draw a card.</div>
+    <button id="draw-btn" class="draw-btn" onclick="drawCard()">🃏 Draw a Card</button>
+
+    <div id="drawn-card" class="drawn-card">
+      <div id="card-visual" class="card-visual"></div>
+      <div id="card-rule" class="card-rule">
+        <span id="rule-label" class="rule-label"></span>
+        <span id="rule-text"></span>
+      </div>
+      <button class="next-btn" onclick="nextTurn()">✅ Done — Next Player</button>
+    </div>
+  </div>
+
+  <div class="rules-section">
+    <h3>📋 Quick Rules</h3>
+    <div class="rules-grid">
+      <div class="rule-pill red-s"><div class="dot"></div>Red — Take 1 sip</div>
+      <div class="rule-pill orange-s"><div class="dot"></div>Orange — Give 1 sip</div>
+      <div class="rule-pill yellow-s"><div class="dot"></div>Yellow — Everyone sips</div>
+      <div class="rule-pill green-s"><div class="dot"></div>Green — Make a rule</div>
+      <div class="rule-pill blue-s"><div class="dot"></div>Blue — Waterfall 🌊</div>
+      <div class="rule-pill purple-s"><div class="dot"></div>Purple — Take 2 sips</div>
+    </div>
+    <div class="special-rules">
+      <div class="special-rule-pill">🍬 Peppermint Forest — Shot time! Everyone takes a shot</div>
+      <div class="special-rule-pill">🍡 Gumdrop Mountain — Truth or dare with the group</div>
+      <div class="special-rule-pill">🍭 Lollipop Woods — Swap drinks with someone</div>
+      <div class="special-rule-pill">🍰 Candy Castle — 1st to arrive wins! Last player finishes</div>
+    </div>
+  </div>
+</div>
+
+<!-- WIN SCREEN -->
+<div id="win" class="screen">
+  <div class="confetti-emoji">🏆</div>
+  <div class="win-title">We Have a Winner!</div>
+  <div id="win-name" class="win-name"></div>
+
+  <div class="win-card">
+    <div style="font-size: 2rem; margin-bottom: 10px;">🎊</div>
+    <div style="font-weight: 700; color: var(--dark); font-size: 1.1rem; margin-bottom: 6px;">Congratulations!</div>
+    <div style="color: #666; font-size: 0.95rem;">The winner gets bragging rights and doesn't have to drink!</div>
+
+    <div class="loser-rule" id="loser-rule"></div>
+
+    <div id="final-standings" class="final-standings"></div>
+  </div>
+
+  <button class="btn-primary" onclick="resetGame()">🔄 Play Again</button>
+</div>
+
+<script>
+// ---- GAME DATA ----
+const COLORS = ['red','orange','yellow','green','blue','purple'];
+const PLAYER_EMOJIS = ['🐸','🦊','🦄','🐻','🌸','🤠'];
+const PLAYER_COLORS = ['#FF4D6D','#FF8C42','#9B5DE5','#06D6A0','#118AB2','#F72585'];
+
+const BOARD = [
+  {type:'start', label:'START', emoji:'🏁'},
+  {type:'red'},
+  {type:'orange'},
+  {type:'yellow'},
+  {type:'green'},
+  {type:'blue'},
+  {type:'red'},
+  {type:'special', key:'peppermint', label:'🍬', name:'Peppermint Forest'},
+  {type:'purple'},
+  {type:'orange'},
+  {type:'yellow'},
+  {type:'green'},
+  {type:'red'},
+  {type:'blue'},
+  {type:'purple'},
+  {type:'orange'},
+  {type:'special', key:'gumdrop', label:'🍡', name:'Gumdrop Mountain'},
+  {type:'green'},
+  {type:'red'},
+  {type:'yellow'},
+  {type:'blue'},
+  {type:'purple'},
+  {type:'orange'},
+  {type:'red'},
+  {type:'special', key:'lollipop', label:'🍭', name:'Lollipop Woods'},
+  {type:'green'},
+  {type:'blue'},
+  {type:'yellow'},
+  {type:'purple'},
+  {type:'red'},
+  {type:'orange'},
+  {type:'green'},
+  {type:'blue'},
+  {type:'purple'},
+  {type:'yellow'},
+  {type:'finish', label:'FINISH', emoji:'🏰'},
+];
+
+const COLOR_RULES = {
+  red:    { label: '🔴 Red Space', rule: 'Take 1 sip from your drink.', bg: '#FF4D6D' },
+  orange: { label: '🟠 Orange Space', rule: 'Give 1 sip to any player you choose.', bg: '#FF8C42' },
+  yellow: { label: '🟡 Yellow Space', rule: 'Everyone drinks! All players take a sip.', bg: '#FFD166', textDark: true },
+  green:  { label: '🟢 Green Space', rule: 'Make a rule! Create a new rule that lasts the rest of the game.', bg: '#06D6A0' },
+  blue:   { label: '🔵 Blue Space', rule: 'Waterfall! Start drinking — everyone else must follow and can only stop after the person to their left stops.', bg: '#118AB2' },
+  purple: { label: '🟣 Purple Space', rule: 'Take 2 big sips. No cheating.', bg: '#9B5DE5' },
+};
+
+const SPECIAL_RULES = {
+  peppermint: { label: '🍬 Peppermint Forest!', rule: 'SHOT TIME! Every player takes a shot. Non-drinkers take a sip of their drink.', bg: '#FF4D6D' },
+  gumdrop:    { label: '🍡 Gumdrop Mountain!', rule: 'Truth or Dare! You must complete a truth or dare chosen by the group, or take 3 sips.', bg: '#9B5DE5' },
+  lollipop:   { label: '🍭 Lollipop Woods!', rule: 'Swap drinks with any player of your choice! What they had is now yours.', bg: '#F72585' },
+};
+
+// ---- STATE ----
+let players = [];
+let currentPlayer = 0;
+let gameOver = false;
+let numPlayers = 4;
+
+// ---- SETUP ----
+function setPlayerCount(n) {
+  numPlayers = n;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+  renderPlayerInputs();
+}
+
+function renderPlayerInputs() {
+  const container = document.getElementById('player-inputs');
+  container.innerHTML = '';
+  for (let i = 0; i < numPlayers; i++) {
+    const row = document.createElement('div');
+    row.className = 'player-input-row';
+    row.innerHTML = `
+      <div class="player-emoji" style="background:${PLAYER_COLORS[i]}22">${PLAYER_EMOJIS[i]}</div>
+      <input type="text" placeholder="Player ${i+1} name" id="pname-${i}" maxlength="14" />
+    `;
+    container.appendChild(row);
+  }
+}
+
+renderPlayerInputs();
+
+function startGame() {
+  players = [];
+  for (let i = 0; i < numPlayers; i++) {
+    const input = document.getElementById(`pname-${i}`);
+    const name = input.value.trim() || `Player ${i+1}`;
+    players.push({
+      name, emoji: PLAYER_EMOJIS[i],
+      color: PLAYER_COLORS[i],
+      position: 0,
+      sips: 0,
+    });
+  }
+  currentPlayer = 0;
+  gameOver = false;
+
+  showScreen('game');
+  renderBoard();
+  renderPlayers();
+  renderTurn();
+}
+
+// ---- GAME ----
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function renderBoard() {
+  const track = document.getElementById('board-track');
+  track.innerHTML = '';
+  BOARD.forEach((space, idx) => {
+    const el = document.createElement('div');
+    el.className = 'space';
+    el.id = `space-${idx}`;
+
+    if (space.type === 'start') {
+      el.classList.add('start');
+      el.textContent = '🏁';
+    } else if (space.type === 'finish') {
+      el.classList.add('finish');
+      el.textContent = '🏰';
+    } else if (space.type === 'special') {
+      el.classList.add('special');
+      el.textContent = space.emoji || space.label;
+      el.title = space.name;
+    } else {
+      el.classList.add(`${space.type}-s`);
+    }
+
+    // player dots
+    const dots = document.createElement('div');
+    dots.className = 'player-dots';
+    el.appendChild(dots);
+    track.appendChild(el);
+  });
+  updatePlayerDots();
+}
+
+function updatePlayerDots() {
+  // Clear all dots
+  document.querySelectorAll('.player-dots').forEach(d => d.innerHTML = '');
+  document.querySelectorAll('.space').forEach(s => s.classList.remove('has-player'));
+
+  players.forEach(p => {
+    const spaceEl = document.getElementById(`space-${p.position}`);
+    if (!spaceEl) return;
+    spaceEl.classList.add('has-player');
+    const dots = spaceEl.querySelector('.player-dots');
+    const dot = document.createElement('div');
+    dot.className = 'player-dot';
+    dot.style.background = p.color;
+    dots.appendChild(dot);
+  });
+}
+
+function renderPlayers() {
+  const panel = document.getElementById('players-panel');
+  panel.innerHTML = '';
+  players.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = `player-card${i === currentPlayer ? ' active-player' : ''}`;
+    card.id = `pcard-${i}`;
+    const posLabel = p.position === 0 ? 'Start' : p.position >= BOARD.length - 1 ? '🏰 Finished!' : `Space ${p.position}`;
+    card.innerHTML = `
+      <div class="p-emoji">${p.emoji}</div>
+      <div class="p-name">${p.name}</div>
+      <div class="p-pos">${posLabel}</div>
+      <div class="p-sips">🍺 ${p.sips} sips</div>
+      ${i === currentPlayer ? '<div class="active-badge">YOUR TURN</div>' : ''}
+    `;
+    panel.appendChild(card);
+  });
+}
+
+function renderTurn() {
+  const p = players[currentPlayer];
+  document.getElementById('turn-name').textContent = `${p.emoji} ${p.name}`;
+  document.getElementById('turn-sub').textContent = "It's your turn! Draw a card.";
+  document.getElementById('draw-btn').disabled = false;
+  document.getElementById('drawn-card').classList.remove('show');
+}
+
+function drawCard() {
+  const p = players[currentPlayer];
+  document.getElementById('draw-btn').disabled = true;
+
+  // Draw a random color card
+  const drawn = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+  // Find next space of that color
+  let newPos = p.position;
+  let found = false;
+  for (let i = p.position + 1; i < BOARD.length; i++) {
+    if (BOARD[i].type === drawn || (BOARD[i].type === 'finish')) {
+      newPos = i;
+      found = true;
+      break;
+    }
+  }
+  if (!found) newPos = BOARD.length - 1; // move to finish if no more
+
+  p.position = newPos;
+  const space = BOARD[newPos];
+
+  // Show card
+  const cardVisual = document.getElementById('card-visual');
+  const ruleLabel = document.getElementById('rule-label');
+  const ruleText = document.getElementById('rule-text');
+  const drawnCard = document.getElementById('drawn-card');
+
+  let bg, labelText, ruleTextContent;
+
+  if (space.type === 'finish') {
+    bg = 'linear-gradient(135deg, #FFD166, #FF8C42)';
+    labelText = '🏰 Candy Castle!';
+    ruleTextContent = `${p.name} reached the Candy Castle and WINS! 🎉 The last player to finish must drink the rest of their drink!`;
+    cardVisual.innerHTML = '🏰';
+    cardVisual.style.background = bg;
+  } else if (space.type === 'special') {
+    const sr = SPECIAL_RULES[space.key];
+    bg = sr.bg;
+    labelText = sr.label;
+    ruleTextContent = sr.rule;
+    cardVisual.innerHTML = space.label;
+    cardVisual.style.background = sr.bg;
+  } else {
+    const cr = COLOR_RULES[drawn];
+    bg = cr.bg;
+    labelText = cr.label;
+    ruleTextContent = cr.rule;
+    const colorEmojis = {red:'🔴',orange:'🟠',yellow:'🟡',green:'🟢',blue:'🔵',purple:'🟣'};
+    cardVisual.innerHTML = colorEmojis[drawn] || drawn;
+    cardVisual.style.background = cr.bg;
+  }
+
+  ruleLabel.textContent = labelText;
+  ruleText.textContent = ruleTextContent;
+
+  // Track sips roughly
+  if (space.type !== 'finish' && space.type !== 'special' && (drawn === 'red' || drawn === 'purple' || drawn === 'blue')) {
+    p.sips += drawn === 'purple' ? 2 : 1;
+  }
+
+  drawnCard.classList.add('show');
+  updatePlayerDots();
+  renderPlayers();
+
+  // Check win
+  if (space.type === 'finish') {
+    document.querySelector('.next-btn').textContent = '🏆 See Results!';
+    document.querySelector('.next-btn').onclick = showWin;
+    gameOver = true;
+  }
+}
+
+function nextTurn() {
+  if (gameOver) { showWin(); return; }
+  currentPlayer = (currentPlayer + 1) % players.length;
+  renderPlayers();
+  renderTurn();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showWin() {
+  const winner = players.find(p => p.position >= BOARD.length - 1) || players[currentPlayer];
+  const sorted = [...players].sort((a, b) => b.position - a.position);
+  const loser = sorted[sorted.length - 1];
+
+  document.getElementById('win-name').textContent = `${winner.emoji} ${winner.name}`;
+  document.getElementById('loser-rule').textContent =
+    `😬 ${loser.name} was last — you must finish your drink! Bottoms up!`;
+
+  const standings = document.getElementById('final-standings');
+  standings.innerHTML = '';
+  sorted.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = `standing-row${i === 0 ? ' winner-row' : ''}`;
+    const place = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣'][i];
+    row.innerHTML = `
+      <span>${place} ${p.emoji} ${p.name}</span>
+      <span>Space ${p.position} • ${p.sips} sips 🍺</span>
+    `;
+    standings.appendChild(row);
+  });
+
+  showScreen('win');
+}
+
+function resetGame() {
+  showScreen('setup');
+  renderPlayerInputs();
+}
+</script>
+
+</body>
+</html>
