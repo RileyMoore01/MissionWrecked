@@ -3,8 +3,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Space Wrecked 🚀</title>
+
+<!-- PWA -->
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#04040f">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS PWA -->
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Space Wrecked">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<!-- Age gate / content descriptor -->
+
+<meta name="rating" content="adult">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -89,7 +106,7 @@ overflow: hidden;
 .race-track {
 position: relative;
 width: 100%;
-height: 260px;
+height: 200px;
 border-radius: 14px;
 overflow: hidden;
 background: linear-gradient(180deg, #000510 0%, #020818 40%, #040a1e 100%);
@@ -240,32 +257,28 @@ pointer-events: none;
 50% { opacity: .8; }
 }
 
-/* Crew cards */
-.crew-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin-bottom:12px; }
-.crew-card { background:var(–surface); border:1px solid var(–border); border-radius:16px; padding:12px 10px; text-align:center; transition:all .3s; position:relative; overflow:hidden; }
-.crew-card::before { content:’’; position:absolute; top:0; left:0; right:0; height:1px; background:transparent; transition:background .3s; }
-.crew-card.active-crew { border-color:var(–blue); box-shadow:0 0 20px rgba(61,158,255,.2); background:rgba(61,158,255,.06); }
-.crew-card.active-crew::before { background:linear-gradient(90deg,transparent,var(–blue),transparent); }
-.cc-icon { font-size:1.7rem; display:block; }
-.cc-name { font-weight:800; font-size:.82rem; margin:4px 0 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.cc-pos { font-size:.7rem; color:var(–text-dim); }
-.cc-stats { display:flex; justify-content:center; gap:6px; margin-top:6px; flex-wrap:wrap; }
-.cc-stat { font-size:.68rem; font-weight:700; padding:2px 6px; border-radius:6px; background:var(–surface2); }
-.sip-stat { color:var(–blue); } .shot-stat { color:var(–red); }
-/* Power-up badges */
-.cc-powerups { display:flex; justify-content:center; gap:4px; margin-top:5px; flex-wrap:wrap; }
-.pup-badge { font-size:.75rem; padding:1px 5px; border-radius:6px; font-weight:700; border:1px solid; }
-.pup-shield { background:rgba(61,158,255,.15); border-color:rgba(61,158,255,.4); color:var(–blue); }
-.pup-double { background:rgba(0,229,160,.15); border-color:rgba(0,229,160,.4); color:var(–green); }
-.pup-skip { background:rgba(255,59,92,.15); border-color:rgba(255,59,92,.4); color:var(–red); }
-.turn-badge { display:inline-block; font-family:‘Orbitron’,monospace; font-size:.55rem; letter-spacing:2px; color:var(–blue); border:1px solid var(–blue); border-radius:6px; padding:2px 6px; margin-top:4px; animation:glow-pulse 1.5s infinite; }
+/* Compact crew strip */
+.crew-strip { display:flex; gap:6px; margin-bottom:8px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.crew-strip::-webkit-scrollbar { display:none; }
+.crew-chip { display:flex; flex-direction:column; align-items:center; gap:2px; background:var(–surface); border:1px solid var(–border); border-radius:12px; padding:6px 8px; flex-shrink:0; min-width:58px; transition:all .2s; position:relative; overflow:hidden; }
+.crew-chip::before { content:’’; position:absolute; top:0; left:0; right:0; height:2px; background:transparent; border-radius:12px 12px 0 0; }
+.crew-chip.active-chip { border-color:var(–blue); background:rgba(61,158,255,.08); }
+.crew-chip.active-chip::before { background:var(–blue); }
+.chip-emoji { font-size:1.2rem; line-height:1; }
+.chip-name { font-size:.58rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:54px; text-align:center; }
+.chip-stats { display:flex; gap:3px; }
+.chip-stat { font-size:.58rem; font-weight:700; padding:1px 4px; border-radius:4px; background:var(–surface2); }
+.chip-stat.sip { color:var(–blue); } .chip-stat.shot { color:var(–red); }
+.chip-pups { display:flex; gap:2px; }
+.chip-pup { font-size:.6rem; }
+.chip-turn { font-family:‘Orbitron’,monospace; font-size:.42rem; letter-spacing:1px; color:var(–blue); border:1px solid rgba(61,158,255,.5); border-radius:3px; padding:1px 3px; margin-top:1px; animation:glow-pulse 1.5s infinite; }
 @keyframes glow-pulse { 0%,100%{box-shadow:0 0 5px rgba(61,158,255,.3)} 50%{box-shadow:0 0 15px rgba(61,158,255,.7)} }
 
 /* Turn panel */
-.turn-panel { background:var(–surface); border:1px solid var(–border); border-radius:20px; padding:22px 20px; margin-bottom:12px; text-align:center; position:relative; overflow:hidden; }
+.turn-panel { background:var(–surface); border:1px solid var(–border); border-radius:20px; padding:14px 16px; margin-bottom:10px; text-align:center; position:relative; overflow:hidden; }
 .turn-panel::before { content:’’; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(180,79,255,.5),transparent); }
-.turn-label { font-family:‘Orbitron’,monospace; font-size:.6rem; letter-spacing:4px; color:var(–text-dim); margin-bottom:6px; }
-.turn-name { font-family:‘Orbitron’,monospace; font-weight:900; font-size:1.4rem; color:white; margin-bottom:4px; }
+.turn-label { font-family:‘Orbitron’,monospace; font-size:.55rem; letter-spacing:4px; color:var(–text-dim); margin-bottom:4px; }
+.turn-name { font-family:‘Orbitron’,monospace; font-weight:900; font-size:1.2rem; color:white; margin-bottom:4px; }
 .shield-notice { display:none; font-size:.78rem; font-weight:700; color:var(–blue); margin-bottom:14px; background:rgba(61,158,255,.1); border:1px solid rgba(61,158,255,.3); border-radius:8px; padding:6px 12px; }
 .shield-notice.show { display:block; }
 .double-notice { display:none; font-size:.78rem; font-weight:700; color:var(–green); margin-bottom:14px; background:rgba(0,229,160,.1); border:1px solid rgba(0,229,160,.3); border-radius:8px; padding:6px 12px; }
@@ -285,24 +298,23 @@ pointer-events: none;
 .btn-confirm { margin-top:14px; padding:13px 32px; background:linear-gradient(135deg,var(–green),#00b87a); color:#001a10; border:none; border-radius:14px; font-family:‘Orbitron’,monospace; font-size:.8rem; font-weight:700; cursor:pointer; letter-spacing:2px; box-shadow:0 0 20px rgba(0,229,160,.3); transition:all .2s; }
 .btn-confirm:hover { transform:translateY(-2px); }
 
-/* Reference panel */
-.ref-panel { background:var(–surface); border:1px solid var(–border); border-radius:20px; padding:16px; position:relative; overflow:hidden; }
-.ref-panel::before { content:’’; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,210,63,.4),transparent); }
-.ref-title { font-family:‘Orbitron’,monospace; font-size:.6rem; letter-spacing:4px; color:var(–text-dim); text-align:center; margin-bottom:12px; }
-.ref-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px; }
-.ref-pill { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:10px; font-size:.72rem; font-weight:700; border:1px solid transparent; }
+/* Reference panel — now a modal */
+.ref-modal-box { max-height:80vh; overflow-y:auto; }
+.ref-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+.ref-pill { display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:10px; font-size:.72rem; font-weight:700; border:1px solid transparent; }
 .ref-pill.red-s { background:rgba(255,59,92,.12); border-color:rgba(255,59,92,.3); color:var(–red); }
 .ref-pill.orange-s { background:rgba(255,122,61,.12); border-color:rgba(255,122,61,.3); color:var(–orange); }
 .ref-pill.yellow-s { background:rgba(255,210,63,.1); border-color:rgba(255,210,63,.3); color:var(–yellow); }
 .ref-pill.green-s { background:rgba(0,229,160,.1); border-color:rgba(0,229,160,.3); color:var(–green); }
 .ref-pill.blue-s { background:rgba(61,158,255,.1); border-color:rgba(61,158,255,.3); color:var(–blue); }
 .ref-pill.purple-s { background:rgba(180,79,255,.1); border-color:rgba(180,79,255,.3); color:var(–purple); }
-.ref-specials { display:flex; flex-direction:column; gap:5px; }
+.ref-specials { display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
 .ref-special { padding:7px 10px; border-radius:10px; font-size:.73rem; font-weight:600; background:var(–surface2); border:1px solid var(–border); color:var(–text); }
-
-/* Power-up legend */
-.pup-legend { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.pup-legend { display:flex; gap:6px; flex-wrap:wrap; }
 .pup-legend-item { font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:8px; border:1px solid; }
+.pup-legend-item.pup-shield { background:rgba(61,158,255,.15); border-color:rgba(61,158,255,.4); color:var(–blue); }
+.pup-legend-item.pup-double { background:rgba(0,229,160,.15); border-color:rgba(0,229,160,.4); color:var(–green); }
+.pup-legend-item.pup-skip { background:rgba(255,59,92,.15); border-color:rgba(255,59,92,.4); color:var(–red); }
 
 /* Modals */
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.85); z-index:100; align-items:center; justify-content:center; backdrop-filter:blur(6px); }
@@ -378,7 +390,39 @@ pointer-events: none;
 <body>
 <div id="stars"></div>
 
-<!-- SETUP -->
+<!-- AGE GATE (required for App Store compliance) -->
+
+<div id="age-gate" style="
+  position:fixed;inset:0;z-index:999;
+  background:#04040f;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+  font-family:'Exo 2',sans-serif;
+">
+  <div style="font-size:4rem;margin-bottom:16px;">🚀</div>
+  <div style="font-family:'Orbitron',monospace;font-weight:900;font-size:1.6rem;
+    background:linear-gradient(135deg,#3D9EFF,#B44FFF,#FF4FD8);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    margin-bottom:8px;letter-spacing:2px;">SPACE WRECKED</div>
+  <div style="font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:5px;color:rgba(232,232,255,.5);margin-bottom:40px;">ADULT PARTY GAME</div>
+  <div style="font-size:1.1rem;font-weight:700;color:#E8E8FF;margin-bottom:8px;">You must be 21 or older<br>to enter this app.</div>
+  <div style="font-size:.85rem;color:rgba(232,232,255,.5);margin-bottom:36px;line-height:1.6;">This app contains alcohol-related content.<br>Please drink responsibly.</div>
+  <button onclick="confirmAge(true)" style="
+    width:100%;max-width:320px;padding:16px;margin-bottom:12px;
+    background:linear-gradient(135deg,#3D9EFF,#B44FFF);
+    color:white;border:none;border-radius:16px;
+    font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;
+    letter-spacing:2px;cursor:pointer;
+    box-shadow:0 0 25px rgba(61,158,255,.35);
+  ">✓ I AM 21 OR OLDER</button>
+  <button onclick="confirmAge(false)" style="
+    width:100%;max-width:320px;padding:14px;
+    background:transparent;color:rgba(232,232,255,.4);
+    border:1px solid rgba(255,255,255,.1);border-radius:16px;
+    font-family:'Orbitron',monospace;font-size:.75rem;
+    letter-spacing:2px;cursor:pointer;
+  ">I am under 21</button>
+</div>
 
 <div id="setup" class="screen active">
   <div class="logo-wrap">
@@ -407,15 +451,15 @@ pointer-events: none;
   <div class="game-topbar">
     <div class="game-logo">🚀 SPACE WRECKED</div>
     <div style="display:flex;gap:6px">
-      <button class="btn-ghost" onclick="showDrinkLog()">📊 Log</button>
-      <button class="btn-ghost" onclick="resetGame()">↩ Reset</button>
+      <button class="btn-ghost" onclick="showRefModal()">❓</button>
+      <button class="btn-ghost" onclick="showDrinkLog()">📊</button>
+      <button class="btn-ghost" onclick="resetGame()">↩</button>
     </div>
   </div>
   <div id="mission-rules-banner">
     <div class="mission-rules-title">⬡ ACTIVE MISSION RULES</div>
     <div id="mission-rules-list"></div>
   </div>
-  <div id="crew-grid" class="crew-grid"></div>
   <div class="board-panel">
     <div class="board-label">⬡ ROCKET RACE ⬡</div>
     <div id="race-track" class="race-track">
@@ -430,35 +474,43 @@ pointer-events: none;
     <div id="double-notice" class="double-notice">⚡ DOUBLE DRAW ACTIVE — You draw twice this turn!</div>
     <button id="draw-btn" class="btn-draw" onclick="drawCard()">⬡ DRAW CARD ⬡</button>
     <div id="drawn-result" class="drawn-result">
-      <div id="space-card" class="space-card"></div>
       <div id="rule-bubble" class="rule-bubble">
         <span id="rule-label" class="rl"></span>
         <span id="rule-text" class="rt"></span>
       </div>
-      <button class="btn-confirm" id="confirm-btn" onclick="nextTurn()">✓ CONFIRMED — NEXT PILOT</button>
+      <button class="btn-confirm" id="confirm-btn" onclick="nextTurn()">✓ NEXT PILOT</button>
     </div>
   </div>
-  <div class="ref-panel">
-    <div class="ref-title">⬡ SPACE CODES ⬡</div>
+</div>
+
+<!-- REFERENCE MODAL -->
+
+<div id="ref-modal" class="modal-overlay">
+  <div class="modal-box ref-modal-box">
+    <span class="modal-icon">📖</span>
+    <div class="modal-title">SPACE CODES</div>
     <div class="ref-grid">
-      <div class="ref-pill red-s">🔴 Red — 8 asteroid events</div>
-      <div class="ref-pill orange-s">🟠 Orange — 8 flare events</div>
-      <div class="ref-pill yellow-s">🟡 Yellow — 8 nebula events</div>
-      <div class="ref-pill green-s">🟢 Green — 8 wormhole events</div>
-      <div class="ref-pill blue-s">🔵 Blue — 8 gravity events</div>
-      <div class="ref-pill purple-s">🟣 Purple — 8 void events</div>
+      <div class="ref-pill red-s">🔴 Red — asteroids</div>
+      <div class="ref-pill orange-s">🟠 Orange — flares</div>
+      <div class="ref-pill yellow-s">🟡 Yellow — nebulas</div>
+      <div class="ref-pill green-s">🟢 Green — wormholes</div>
+      <div class="ref-pill blue-s">🔵 Blue — gravity</div>
+      <div class="ref-pill purple-s">🟣 Purple — void</div>
     </div>
     <div class="ref-specials">
-      <div class="ref-special">🪐 Saturn Station — Timed mini-game challenge (16 types!)</div>
-      <div class="ref-special">☄️ Comet Strike — Shot time! All crew drinks</div>
-      <div class="ref-special">🌑 Black Hole — Thumb war, loser drinks 3</div>
-      <div class="ref-special">⚔️ Duel Station — Head-to-head challenge vs. random crew member</div>
-      <div class="ref-special">🌀 Blackout Zone — Chaos rule fires for everyone!</div>
+      <div class="ref-special">🪐 Saturn Station — mini-game challenge</div>
+      <div class="ref-special">☄️ Comet Strike — all crew drinks a shot</div>
+      <div class="ref-special">🌑 Black Hole — thumb war, loser drinks 3</div>
+      <div class="ref-special">⚔️ Duel Station — head-to-head challenge</div>
+      <div class="ref-special">🌀 Blackout Zone — chaos rule fires!</div>
     </div>
     <div class="pup-legend">
-      <div class="pup-legend-item pup-shield">🛡️ Shield — blocks 1 negative card</div>
-      <div class="pup-legend-item pup-double">⚡ Double Draw — draw 2 cards next turn</div>
-      <div class="pup-legend-item pup-skip">⏭️ Skip — lose next turn</div>
+      <div class="pup-legend-item pup-shield">🛡️ Shield</div>
+      <div class="pup-legend-item pup-double">⚡ Double Draw</div>
+      <div class="pup-legend-item pup-skip">⏭️ Skip</div>
+    </div>
+    <div class="modal-btn-row" style="margin-top:16px">
+      <button class="btn-modal primary" onclick="closeModal('ref-modal')">⬡ GOT IT</button>
     </div>
   </div>
 </div>
@@ -616,79 +668,79 @@ const COLOR_POOLS = {
   red: {
     color:'var(--red)', bg:'rgba(255,59,92,.2)',
     rules:[
-      { icon:'☄️', label:'🔴 ASTEROID FIELD', text:'Brace for impact! Take 1 sip.' },
-      { icon:'💥', label:'🔴 HULL BREACH', text:'Emergency! Take 2 sips — then everyone slaps the table. Last person to slap takes an extra sip.' },
-      { icon:'🌋', label:'🔴 SOLAR ERUPTION', text:'Radiation alert! You AND the player to your left each take 1 sip.' },
-      { icon:'🔴', label:'🔴 RED ALERT', text:'All hands on deck! Name any astronaut or space explorer. If the crew can\'t verify it — YOU drink 2. If verified — give 2 sips.' },
-      { icon:'🪨', label:'🔴 METEOR SHOWER', text:'Rock storm! Take 1 sip, then point at someone — they take 1 too.' },
-      { icon:'🔥', label:'🔴 REENTRY BURN', text:'You\'re on fire! Roll a mental dice (say a number 1–4 out loud) — drink that many sips. No lying.', special:'selfdice' },
-      { icon:'💀', label:'🔴 SPACE JUNK', text:'Debris field! Everyone with a full drink takes 1 sip. Everyone with less than half left takes 2.' },
-      { icon:'🚨', label:'🔴 SYSTEM FAILURE', text:'Critical failure! You lose your next turn (SKIP token applied) AND take 1 sip.', penalty:'skip' },
+      { icon:'☄️', label:'🔴 ASTEROID FIELD', text:'Brace for impact! Take 1 sip.', move:1 },
+      { icon:'💥', label:'🔴 HULL BREACH', text:'Emergency! Take 2 sips — then everyone slaps the table. Last person to slap takes an extra sip.', move:1 },
+      { icon:'🌋', label:'🔴 SOLAR ERUPTION', text:'Radiation alert! You AND the player to your left each take 1 sip.', move:2 },
+      { icon:'🔴', label:'🔴 RED ALERT', text:'All hands on deck! Name any astronaut or space explorer. If the crew can\'t verify it — YOU drink 2. If verified — give 2 sips.', move:2 },
+      { icon:'🪨', label:'🔴 METEOR SHOWER', text:'Rock storm! Take 1 sip, then point at someone — they take 1 too.', move:2 },
+      { icon:'🔥', label:'🔴 REENTRY BURN', text:'You\'re on fire! Roll a mental dice (say a number 1–4 out loud) — drink that many sips. No lying.', special:'selfdice', move:1 },
+      { icon:'💀', label:'🔴 SPACE JUNK', text:'Debris field! Everyone with a full drink takes 1 sip. Everyone with less than half left takes 2.', move:3 },
+      { icon:'🚨', label:'🔴 SYSTEM FAILURE', text:'Critical failure! You lose your next turn (SKIP token applied) AND take 1 sip.', penalty:'skip', move:1 },
     ]
   },
   orange: {
     color:'var(--orange)', bg:'rgba(255,122,61,.2)',
     rules:[
-      { icon:'🌞', label:'🟠 SOLAR FLARE', text:'Radiation detected! Give 2 sips to any crew member.' },
-      { icon:'🔥', label:'🟠 PLASMA BURST', text:'Hot! Give 1 sip to TWO different crew members.' },
-      { icon:'🌅', label:'🟠 STAR RISE', text:'New star! Distribute 3 sips among the crew however you like.' },
-      { icon:'⚡', label:'🟠 ION STORM', text:'Ion surge! Crew votes: who has been the luckiest this game? That player takes 2 sips.', special:'vote', voteQ:'Who has been the luckiest this game?', voteResult:'takes 2 sips for being too lucky!' },
-      { icon:'🧯', label:'🟠 ENGINE FIRE', text:'Swap your drink with any crew member. Their cup is now yours for the rest of the round.' },
-      { icon:'☀️', label:'🟠 BINARY STAR', text:'Pick 2 people — they both take 1 sip while holding eye contact. First to blink takes another.' },
-      { icon:'🌤️', label:'🟠 GEOMAGNETIC STORM', text:'Magnetic disruption! The player with the FEWEST sips so far takes 3 sips (tie = all tied players drink).' },
-      { icon:'💫', label:'🟠 STELLAR WIND', text:'Cosmic breath! Give your next turn\'s card advantage to someone else — you draw, but THEY get the result. Apply this now.' },
+      { icon:'🌞', label:'🟠 SOLAR FLARE', text:'Radiation detected! Give 2 sips to any crew member.', move:3 },
+      { icon:'🔥', label:'🟠 PLASMA BURST', text:'Hot! Give 1 sip to TWO different crew members.', move:3 },
+      { icon:'🌅', label:'🟠 STAR RISE', text:'New star! Distribute 3 sips among the crew however you like.', move:2 },
+      { icon:'⚡', label:'🟠 ION STORM', text:'Ion surge! Crew votes: who has been the luckiest this game? That player takes 2 sips.', special:'vote', voteQ:'Who has been the luckiest this game?', voteResult:'takes 2 sips for being too lucky!', move:2 },
+      { icon:'🧯', label:'🟠 ENGINE FIRE', text:'Swap your drink with any crew member. Their cup is now yours for the rest of the round.', move:3 },
+      { icon:'☀️', label:'🟠 BINARY STAR', text:'Pick 2 people — they both take 1 sip while holding eye contact. First to blink takes another.', move:3 },
+      { icon:'🌤️', label:'🟠 GEOMAGNETIC STORM', text:'Magnetic disruption! The player with the FEWEST sips so far takes 3 sips (tie = all tied players drink).', move:2 },
+      { icon:'💫', label:'🟠 STELLAR WIND', text:'Cosmic breath! Give your next turn\'s card advantage to someone else — you draw, but THEY get the result. Apply this now.', move:4 },
     ]
   },
   yellow: {
     color:'var(--yellow)', bg:'rgba(255,210,63,.18)',
     rules:[
-      { icon:'🌌', label:'🟡 NEBULA CLOUD', text:'Cosmic gas everywhere! All crew members take a sip.' },
-      { icon:'💛', label:'🟡 PULSAR WAVE', text:'Electromagnetic pulse! Everyone counts down 3-2-1 together then sips in unison.' },
-      { icon:'⭐', label:'🟡 SUPERNOVA', text:'KABOOM! Everyone drinks for 3 full seconds. No stopping early.' },
-      { icon:'🟡', label:'🟡 YELLOW DWARF', text:'Lukewarm energy. Everyone EXCEPT the current pilot takes a sip.' },
-      { icon:'✨', label:'🟡 STARDUST', text:'Crew votes: who\'s been the funniest this game? That person is SAFE. Everyone else sips.', special:'vote', voteQ:'Who has been the funniest this game?', voteResult:'is safe — everyone else sips!' },
-      { icon:'🌠', label:'🟡 SHOOTING STAR', text:'Make a wish! Say something embarrassing or take 3 sips. Your choice.' },
-      { icon:'🌻', label:'🟡 HELIOSPHERE', text:'Solar protection down! Name a planet. Go clockwise — each player names one. First repeat or blank takes 2 sips.' },
-      { icon:'⚗️', label:'🟡 NUCLEAR FUSION', text:'Chain reaction! Current player sips, then taps someone — they sip and tap someone else. Keeps going until someone breaks the chain (refuses = 3 sips).' },
+      { icon:'🌌', label:'🟡 NEBULA CLOUD', text:'Cosmic gas everywhere! All crew members take a sip.', move:2 },
+      { icon:'💛', label:'🟡 PULSAR WAVE', text:'Electromagnetic pulse! Everyone counts down 3-2-1 together then sips in unison.', move:3 },
+      { icon:'⭐', label:'🟡 SUPERNOVA', text:'KABOOM! Everyone drinks for 3 full seconds. No stopping early.', move:2 },
+      { icon:'🟡', label:'🟡 YELLOW DWARF', text:'Lukewarm energy. Everyone EXCEPT the current pilot takes a sip.', move:3 },
+      { icon:'✨', label:'🟡 STARDUST', text:'Crew votes: who\'s been the funniest this game? That person is SAFE. Everyone else sips.', special:'vote', voteQ:'Who has been the funniest this game?', voteResult:'is safe — everyone else sips!', move:3 },
+      { icon:'🌠', label:'🟡 SHOOTING STAR', text:'Make a wish! Say something embarrassing or take 3 sips. Your choice.', move:2 },
+      { icon:'🌻', label:'🟡 HELIOSPHERE', text:'Solar protection down! Name a planet. Go clockwise — each player names one. First repeat or blank takes 2 sips.', move:3 },
+      { icon:'⚗️', label:'🟡 NUCLEAR FUSION', text:'Chain reaction! Current player sips, then taps someone — they sip and tap someone else. Keeps going until someone breaks the chain (refuses = 3 sips).', move:2 },
     ]
   },
   green: {
     color:'var(--green)', bg:'rgba(0,229,160,.15)',
     rules:[
-      { icon:'🕳️', label:'🟢 WORMHOLE', text:'You\'ve entered a wormhole! Create a Mission Rule everyone must follow for the rest of the game.', special:'mission' },
-      { icon:'🛡️', label:'🟢 SHIELD GENERATOR', text:'Force field online! You gain a 🛡️ SHIELD — the next negative card you draw is completely blocked.', powerup:'shield' },
-      { icon:'⚡', label:'🟢 POWER SURGE', text:'Systems overloaded! You gain a ⚡ DOUBLE DRAW token — your next turn you draw 2 cards and pick the better one for yourself.', powerup:'double' },
-      { icon:'🌿', label:'🟢 ALIEN BIOME', text:'Strange life detected! Make up a fake alien planet name. Crew votes: worst name drinks 2, best name gives 1 sip away.', special:'vote', voteQ:'Worst fake alien planet name?', voteResult:'drinks 2 for their terrible planet name!' },
-      { icon:'📡', label:'🟢 SIGNAL BOOST', text:'Comms online! Pick any crew member — they must describe a black hole using only food metaphors. Fail = 2 sips.' },
-      { icon:'🧬', label:'🟢 MUTATION RAY', text:'Zapped! For the next 3 rounds, if YOU are the one drinking, you may redirect half the sips (rounded down) to someone else.' },
-      { icon:'🌱', label:'🟢 LIFE SUPPORT', text:'Emergency oxygen! Take a water break — you and one crew member of your choice are immune from the next special space effect.' },
-      { icon:'🔋', label:'🟢 ENERGY CACHE', text:'Power reserves full! Give away 2 sips AND take back your previous penalty if you had one (SKIP cleared).' , special:'clearskip' },
+      { icon:'🕳️', label:'🟢 WORMHOLE', text:'You\'ve entered a wormhole! Create a Mission Rule everyone must follow for the rest of the game.', special:'mission', move:4 },
+      { icon:'🛡️', label:'🟢 SHIELD GENERATOR', text:'Force field online! You gain a 🛡️ SHIELD — the next negative card you draw is completely blocked.', powerup:'shield', move:5 },
+      { icon:'⚡', label:'🟢 POWER SURGE', text:'Systems overloaded! You gain a ⚡ DOUBLE DRAW token — your next turn you draw 2 cards and pick the better one for yourself.', powerup:'double', move:5 },
+      { icon:'🌿', label:'🟢 ALIEN BIOME', text:'Strange life detected! Make up a fake alien planet name. Crew votes: worst name drinks 2, best name gives 1 sip away.', special:'vote', voteQ:'Worst fake alien planet name?', voteResult:'drinks 2 for their terrible planet name!', move:3 },
+      { icon:'📡', label:'🟢 SIGNAL BOOST', text:'Comms online! Pick any crew member — they must describe a black hole using only food metaphors. Fail = 2 sips.', move:3 },
+      { icon:'🧬', label:'🟢 MUTATION RAY', text:'Zapped! For the next 3 rounds, if YOU are the one drinking, you may redirect half the sips (rounded down) to someone else.', move:4 },
+      { icon:'🌱', label:'🟢 LIFE SUPPORT', text:'Emergency oxygen! Take a water break — you and one crew member of your choice are immune from the next special space effect.', move:4 },
+      { icon:'🔋', label:'🟢 ENERGY CACHE', text:'Power reserves full! Give away 2 sips AND take back your previous penalty if you had one (SKIP cleared).', special:'clearskip', move:4 },
     ]
   },
   blue: {
     color:'var(--blue)', bg:'rgba(61,158,255,.15)',
     rules:[
-      { icon:'🌊', label:'🔵 GRAVITY WAVE', text:'Waterfall! You drink first, then each crew member follows clockwise — you can only stop after the person to your left stops.' },
-      { icon:'🧊', label:'🔵 CRYO FREEZE', text:'Frozen in cryo! You cannot speak until your next turn. Anyone who talks to you must drink 1 — and you drink 1 if YOU break silence.' },
-      { icon:'🔵', label:'🔵 TRACTOR BEAM', text:'Locked in! Choose a crew member — you both take 2 sips together.' },
-      { icon:'🌀', label:'🔵 SPACE VORTEX', text:'Spinning out! Take 1 sip, then point randomly at someone — they also sip.' },
-      { icon:'💧', label:'🔵 LIQUID NITROGEN', text:'Below zero! The player to your RIGHT picks 1, 2, or 3. You drink that many sips. Then you pick 1–3 and give those to anyone.' },
-      { icon:'🌐', label:'🔵 ORBIT DECAY', text:'Falling fast! Crew votes: who would survive longest alone in space? That player gives 2 sips to whoever got fewest votes.', special:'vote', voteQ:'Who would survive longest alone in space?', voteResult:'gives 2 sips to whoever got fewest votes!' },
-      { icon:'🫧', label:'🔵 ATMOSPHERIC DRAG', text:'Slowing down! You must drink in slow motion for your next 2 sips this turn. If you speed up — take an extra sip.' },
-      { icon:'🔭', label:'🔵 DEEP SCAN', text:'Sensors active! Look at the next 2 spaces ahead of you on the board — you can CHOOSE which one to land on.' },
+      { icon:'🌊', label:'🔵 GRAVITY WAVE', text:'Waterfall! You drink first, then each crew member follows clockwise — you can only stop after the person to your left stops.', move:2 },
+      { icon:'🧊', label:'🔵 CRYO FREEZE', text:'Frozen in cryo! You cannot speak until your next turn. Anyone who talks to you must drink 1 — and you drink 1 if YOU break silence.', move:1 },
+      { icon:'🔵', label:'🔵 TRACTOR BEAM', text:'Locked in! Choose a crew member — you both take 2 sips together.', move:3 },
+      { icon:'🌀', label:'🔵 SPACE VORTEX', text:'Spinning out! Take 1 sip, then point randomly at someone — they also sip.', move:2 },
+      { icon:'💧', label:'🔵 LIQUID NITROGEN', text:'Below zero! The player to your RIGHT picks 1, 2, or 3. You drink that many sips. Then you pick 1–3 and give those to anyone.', move:3 },
+      { icon:'🌐', label:'🔵 ORBIT DECAY', text:'Falling fast! Crew votes: who would survive longest alone in space? That player gives 2 sips to whoever got fewest votes.', special:'vote', voteQ:'Who would survive longest alone in space?', voteResult:'gives 2 sips to whoever got fewest votes!', move:3 },
+      { icon:'🫧', label:'🔵 ATMOSPHERIC DRAG', text:'Slowing down! You must drink in slow motion for your next 2 sips this turn. If you speed up — take an extra sip.', move:2 },
+      { icon:'🔭', label:'🔵 DEEP SCAN', text:'Sensors active! Look at the next 2 spaces ahead of you on the board — you can CHOOSE which one to land on.', move:4 },
     ]
   },
   purple: {
     color:'var(--purple)', bg:'rgba(180,79,255,.15)',
     rules:[
-      { icon:'🌑', label:'🟣 DARK MATTER', text:'Dark matter exposure! Take 2 sips from the void.' },
-      { icon:'👁️', label:'🟣 VOID STARE', text:'The void stares back. Silence for 5 seconds — everyone stares at you. First to laugh or look away drinks 2.' },
-      { icon:'🔮', label:'🟣 SPACE ORACLE', text:'Make a prediction: name a player and a color (e.g. "Riley draws red"). If right on their very next turn — give 3 sips. Wrong — drink 2.' },
-      { icon:'💜', label:'🟣 ANTIMATTER', text:'Existence questioned! Take 3 sips but give 1 back to anyone you choose.' },
-      { icon:'🌌', label:'🟣 DARK ENERGY', text:'Mysterious forces! The youngest crew member decides: YOU drink 1 OR everyone else drinks 1.' },
-      { icon:'👻', label:'🟣 GHOST SIGNAL', text:'Something\'s out there. Say something that happened earlier in the game — if it\'s wrong or no one remembers, take 2 sips.' },
-      { icon:'🕸️', label:'🟣 EVENT HORIZON', text:'You\'re trapped at the edge! You gain a ⏭️ SKIP token — you lose your next turn. AND the crew member to your left takes 1 sip out of pity.', penalty:'skip' },
-      { icon:'🌪️', label:'🟣 QUANTUM FLUX', text:'Reality unstable! The game\'s current vote winner on the drink-log takes 2 sips. If no votes yet — YOU drink 3.' },
+      { icon:'🌑', label:'🟣 DARK MATTER', text:'Dark matter exposure! Take 2 sips from the void.', move:2 },
+      { icon:'👁️', label:'🟣 VOID STARE', text:'The void stares back. Silence for 5 seconds — everyone stares at you. First to laugh or look away drinks 2.', move:1 },
+      { icon:'🔮', label:'🟣 SPACE ORACLE', text:'Make a prediction: name a player and a color (e.g. "Riley draws red"). If right on their very next turn — give 3 sips. Wrong — drink 2.', move:3 },
+      { icon:'💜', label:'🟣 ANTIMATTER', text:'Existence questioned! Take 3 sips but give 1 back to anyone you choose.', move:2 },
+      { icon:'🌌', label:'🟣 DARK ENERGY', text:'Mysterious forces! The youngest crew member decides: YOU drink 1 OR everyone else drinks 1.', move:3 },
+      { icon:'👻', label:'🟣 GHOST SIGNAL', text:'Something\'s out there. Say something that happened earlier in the game — if it\'s wrong or no one remembers, take 2 sips.', move:2 },
+      { icon:'🕸️', label:'🟣 EVENT HORIZON', text:'You\'re trapped at the edge! You gain a ⏭️ SKIP token — you lose your next turn. AND the crew member to your left takes 1 sip out of pity.', penalty:'skip', move:1 },
+      { icon:'🌪️', label:'🟣 QUANTUM FLUX', text:'Reality unstable! The game\'s current vote winner on the drink-log takes 2 sips. If no votes yet — YOU drink 3.', move:2 },
     ]
   },
 };
@@ -913,21 +965,22 @@ function renderRocketRace(){
 }
 
 function renderCrew(){
-  const g=document.getElementById('crew-grid'); g.innerHTML='';
+  const g=document.getElementById('crew-grid'); if(!g) return;
   players.forEach((p,i)=>{
     const c=document.createElement('div');
-    c.className=`crew-card${i===currentPlayer?' active-crew':''}`;
-    const posLabel=p.pos===0?'Launch Pad':p.pos>=BOARD.length-1?'🏰 HQ!':`Sector ${p.pos}`;
+    c.className=`crew-chip${i===currentPlayer?' active-chip':''}`;
     const pups=[];
-    if(p.shield>0) pups.push(`<span class="pup-badge pup-shield">🛡️×${p.shield}</span>`);
-    if(p.doubleDraw>0) pups.push(`<span class="pup-badge pup-double">⚡×${p.doubleDraw}</span>`);
-    if(p.skipTurn) pups.push(`<span class="pup-badge pup-skip">⏭️ SKIP</span>`);
-    c.innerHTML=`<span class="cc-icon">${p.emoji}</span>
-      <div class="cc-name">${p.name}</div>
-      <div class="cc-pos">${posLabel}</div>
-      <div class="cc-stats"><div class="cc-stat sip-stat">💧${p.sips}</div><div class="cc-stat shot-stat">🥃${p.shots}</div></div>
-      ${pups.length?`<div class="cc-powerups">${pups.join('')}</div>`:''}
-      ${i===currentPlayer?'<div class="turn-badge">PILOTING</div>':''}`;
+    if(p.shield>0) pups.push(`<span class="chip-pup">🛡️</span>`);
+    if(p.doubleDraw>0) pups.push(`<span class="chip-pup">⚡</span>`);
+    if(p.skipTurn) pups.push(`<span class="chip-pup">⏭️</span>`);
+    c.innerHTML=`<span class="chip-emoji">${p.emoji}</span>
+      <div class="chip-name">${p.name}</div>
+      <div class="chip-stats">
+        <span class="chip-stat sip">💧${p.sips}</span>
+        <span class="chip-stat shot">🥃${p.shots}</span>
+      </div>
+      ${pups.length?`<div class="chip-pups">${pups.join('')}</div>`:''}
+      ${i===currentPlayer?'<div class="chip-turn">PILOTING</div>':''}`;
     g.appendChild(c);
   });
 }
@@ -936,10 +989,11 @@ function renderTurn(){
   const p=players[currentPlayer];
   document.getElementById('turn-name').textContent=`${p.emoji} ${p.name}`;
   document.getElementById('draw-btn').disabled=false;
+  document.getElementById('draw-btn').style.display='';
   document.getElementById('drawn-result').classList.remove('show');
   document.getElementById('shield-notice').classList.toggle('show', p.shield>0);
   document.getElementById('double-notice').classList.toggle('show', p.doubleDraw>0);
-  document.getElementById('confirm-btn').textContent='✓ CONFIRMED — NEXT PILOT';
+  document.getElementById('confirm-btn').textContent='✓ NEXT PILOT';
   document.getElementById('confirm-btn').onclick=nextTurn;
 }
 
@@ -967,14 +1021,13 @@ function drawCard(){
   const colors=['red','orange','yellow','green','blue','purple'];
   const drawn=colors[Math.floor(Math.random()*colors.length)];
 
-  // Find next space
-  let newPos=p.pos;
-  for(let i=p.pos+1;i<BOARD.length;i++){
-    if(BOARD[i].type===drawn||BOARD[i].type==='finish'){ newPos=i; break; }
-  }
-  if(newPos===p.pos && p.pos<BOARD.length-1) newPos=Math.min(p.pos+3,BOARD.length-1);
-  p.pos=newPos;
-  const space=BOARD[newPos];
+  // Pick the card first so we know how far to move
+  const cr = pickColorRule(drawn);
+  window._lastRule = cr;
+  const spaces = cr.move || 1;
+  let newPos = Math.min(p.pos + spaces, BOARD.length - 1);
+  p.pos = newPos;
+  const space = BOARD[newPos];
 
   let icon,bg,label,text,color;
   window._lastRule=null;
@@ -991,22 +1044,20 @@ function drawCard(){
     icon=sm.icon; bg=`linear-gradient(135deg,${sm.bg},rgba(0,0,0,.3))`;
     label=sm.label; color=sm.color; text=sm.text||'Triggering event...';
   } else {
-    const cr=pickColorRule(drawn);
-    window._lastRule=cr;
     // Shield check
     if(p.shield>0 && isNegativeRule(cr)){
       p.shield--;
       icon='🛡️'; bg='linear-gradient(135deg,rgba(61,158,255,.3),rgba(0,0,0,.3))';
-      label='🛡️ SHIELD ACTIVATED'; color='var(--blue)';
+      label=`🛡️ SHIELD ACTIVATED — moved ${spaces} space${spaces>1?'s':''}`;
+      color='var(--blue)';
       text=`Your shield blocked a "${cr.label}" event! Shield charges remaining: ${p.shield}`;
-      addLog(`${p.name}\'s shield blocked: ${cr.label}`);
-      renderCrew();
-      updateDots();
+      addLog(`${p.name}'s shield blocked: ${cr.label}`);
+      renderCrew(); updateDots();
       showCardResult(icon,bg,label,text,color);
       return;
     }
     icon=cr.icon; bg=`linear-gradient(135deg,${cr.bg},rgba(0,0,0,.2))`;
-    label=cr.label; color=cr.color; text=cr.text;
+    label=`${cr.label} (+${spaces})`; color=cr.color; text=cr.text;
   }
 
   updateDots(); renderCrew();
@@ -1014,7 +1065,6 @@ function drawCard(){
 
   // Post-draw effects
   if(!gameOver){
-    const cr=window._lastRule;
     if(space.type==='special'){
       if(space.key==='saturn')     setTimeout(()=>triggerMiniGame(),500);
       else if(space.key==='blackhole') setTimeout(()=>triggerThumbWar(),500);
@@ -1045,13 +1095,11 @@ function applyRuleEffects(cr){
 }
 
 function showCardResult(icon,bg,label,text,color){
-  const card=document.getElementById('space-card');
   const rl=document.getElementById('rule-label');
   const rt=document.getElementById('rule-text');
-  card.innerHTML=icon; card.style.background=bg;
-  card.style.boxShadow=`0 0 30px ${color||'var(--blue)'}66`;
   rl.textContent=label; rl.style.color=color||'var(--blue)';
   rt.textContent=text;
+  document.getElementById('draw-btn').style.display='none';
   document.getElementById('drawn-result').classList.add('show');
 }
 
@@ -1251,6 +1299,7 @@ function addLog(msg){
   drinkLog.push(`[${ts}] ${msg}`);
 }
 
+function showRefModal(){ document.getElementById('ref-modal').classList.add('show'); }
 function showDrinkLog(){
   const c=document.getElementById('drink-log-content');
   c.innerHTML=drinkLog.length
@@ -1285,6 +1334,47 @@ function resetGame(){ showScreen('setup'); setCount(numCrew); }
 ['mg-modal','blackout-modal','log-modal','thumb-modal','duel-modal','vote-modal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
 });
+</script>
+
+<style>
+  /* Safe area insets for notched phones (iPhone X+) */
+  #setup, #game, #win {
+    padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+  }
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+</style>
+
+<script>
+  // ===================== AGE GATE =====================
+  function confirmAge(isAdult) {
+    if (!isAdult) {
+      document.getElementById('age-gate').innerHTML = `
+        <div style="font-size:3rem;margin-bottom:20px;">🚫</div>
+        <div style="font-family:'Orbitron',monospace;font-weight:700;font-size:1rem;color:#E8E8FF;letter-spacing:2px;margin-bottom:12px;">ACCESS DENIED</div>
+        <div style="color:rgba(232,232,255,.5);font-size:.9rem;">This app is for adults 21+ only.</div>
+      `;
+      return;
+    }
+    // Persist across app restarts — not just the session
+    try { localStorage.setItem('sw_ageConfirmed', '1'); } catch(e) {}
+    document.getElementById('age-gate').style.display = 'none';
+  }
+
+  // Skip age gate if already confirmed on this device
+  try {
+    if (localStorage.getItem('sw_ageConfirmed') === '1') {
+      document.getElementById('age-gate').style.display = 'none';
+    }
+  } catch(e) {}
+
+  // Register service worker for offline/PWA support
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
 </script>
 
 </body>
